@@ -2,6 +2,7 @@
 env/
 .python-version
 gcal_client_secret.json
+gcal_cred_store.json
 
 ### https://raw.github.com/github/gitignore/ab477818977684f0f6ff370da9508e08944bc8c8/Global/macOS.gitignore
 
