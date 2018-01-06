@@ -6,6 +6,8 @@ This project is in construction. Any suggestion and PR are welcome :)
 # About
 Simple python script for fetching daily sleep & activity data from Fitbit API and register it to Google Calendar.
 
+![Fitbit data sent to Google calendar viewed in iCal](doc/img/fitbit2gcal.png)
+
 # How to dev
 Currently I am developing in python 2.7 (3.x are also in focus).
 direnv, virtualenv are recommended to be installed.
