@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from datetime import datetime
 
-class FitbitCred:;
+class FitbitCred:
     def __init__(self, client_id, client_secret, access_token=None, refresh_token=None, expired_at=None):
         self.client_id = client_id
         self.client_secret = client_secret
@@ -13,4 +13,7 @@ class FitbitCred:;
         """
         check whether access_token is not expired
         """
+        if expired_at == None:
+            # ignore validity if expired_at is None
+            return True
         return datetime.now() - self.expired_at > 0

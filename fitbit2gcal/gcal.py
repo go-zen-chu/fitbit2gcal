@@ -46,12 +46,12 @@ def get_credentials():
         print('Storing credentials to ', cred_store_path)
     return credentials
 
-def autiorize_http(credentials):
+def authorize_http(credentials):
     if credentials == None:
         return None, Exception("credential is none")
     return credentials.authorize(httplib2.Http()), None
 
-def create_event(auth_http, title, start_time, end_time, description='', location='', calendar_id='primary', time_zone='Asia/Tokyo'):
+def create_event(auth_http, title, start_datetime, end_datetime, description='', location='', calendar_id='primary', time_zone='Asia/Tokyo'):
     """
     create event in google calendar
     """
@@ -62,11 +62,11 @@ def create_event(auth_http, title, start_time, end_time, description='', locatio
       'location': location,
       'description': description,
       'start': {
-        'dateTime': start_time, #'2018-01-01T09:00:00+09:00',
+        'dateTime': start_datetime.strftime("%Y-%m-%dT%H:%M:%S"), #'2018-01-01T09:00:00+09:00',
         'timeZone': time_zone,
       },
       'end': {
-        'dateTime': end_time, #'2018-01-01T17:00:00+09:00',
+        'dateTime': end_datetime.strftime("%Y-%m-%dT%H:%M:%S"), #'2018-01-01T17:00:00+09:00',
         'timeZone': time_zone,
       },
     }
