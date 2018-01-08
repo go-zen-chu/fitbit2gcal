@@ -30,4 +30,4 @@ if __name__ == '__main__':
 
     time_zone = os.getenv("FITBIT2CAL_TIME_ZONE")
     yesterday = datetime.today() - timedelta(days=1)
-    fitbit2gcal.register_fitbit_to_gcal(fb_cred, gcal_sleep_cal_id, gcal_activity_cal_id, data_day=yesterday, time_zone=time_zone)
+    fitbit2gcal.send_fb_events2gcal(fb_cred, gcal_sleep_cal_id, gcal_activity_cal_id, data_day=yesterday, time_zone=time_zone)

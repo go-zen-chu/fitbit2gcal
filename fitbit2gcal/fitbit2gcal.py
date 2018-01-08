@@ -6,16 +6,17 @@ import gcal
 import fitbit_api
 from cal_event import CalendarEvent
 
-def register_fitbit_to_gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id, data_day = datetime.today(), time_zone="Asia/Tokyo"):
+def send_fb_events2gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id, data_day = datetime.today(), time_zone="Asia/Tokyo"):
+    # MVP
     # 1. get auth of fitbit api
     authd_client, err = fitbit_api.auth_fitbit(fitbit_cred)
     if authd_client == None:
-        sys.exit("authd_client is None : {}".format(err))
+        return Exception("authd_client is None : {}".format(err))
 
     # 2. send request to fitbit
     sleep_data_list = fitbit_api.get_sleeps(authd_client, data_day)
     if sleep_data_list == None:
-        sys.exit("could not get sleep data")
+        return Exception("could not get sleep data")
     if len(sleep_data_list) == 0:
         print("No sleep on this day")
     sleep_events = []
@@ -26,7 +27,7 @@ def register_fitbit_to_gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id
 
     activity_data_list = fitbit_api.get_activities_of_date(authd_client, data_day)
     if activity_data_list == None:
-        sys.exit("could not get activity data")
+        return Exception("could not get activity data")
     if len(activity_data_list) == 0:
         print("No activity on this day")
     activity_events = []
@@ -36,10 +37,15 @@ def register_fitbit_to_gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id
 
     # 3. send fitbit data to google calendar
     gcal_cred = gcal.get_credentials()
+    err = send_events2gcal(sleep_events, activity_events)
+    if err != None:
+        return Exception("Error while send data to google calendar : {}".format(err))
+    return None
+
+def send_events2gcal(gcal_cred, sleep_events, activity_events):
     auth_http, err = gcal.authorize_http(gcal_cred)
     if err != None:
-        print("authorization for google cal is failed: ", err)
-        sys.exit(1)
+        return Exception("authorization for google cal is failed: {}".format(err))
 
     for sleep_event in sleep_events:
         gcal.create_event(auth_http, sleep_event.title,
@@ -54,7 +60,7 @@ def register_fitbit_to_gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id
             description=activity_event.description,
             calendar_id=gcal_activity_cal_id,
             time_zone=time_zone)
-
+    return None
 
 def sleep2event(sleep_data):
     '''

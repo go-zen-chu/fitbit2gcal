@@ -24,6 +24,11 @@ def auth_fitbit(fitbit_cred, unit=fitbit.Fitbit.METRIC):
     except Exception as err:
         return None, err
 
+def refresh_fitbit_token(authd_client):
+    token = authd_client.refresh_token()
+    print(vars(token))
+    return token
+
 def get_sleeps(authd_client, datetime):
     sleepData = authd_client.get_sleep(datetime)
     return sleepData['sleep']
