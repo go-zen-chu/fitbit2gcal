@@ -29,12 +29,6 @@ def get_credentials():
     Returns:
         Credentials, the obtained credential.
     """
-    # home_dir = os.path.expanduser('~')
-    # credential_dir = os.path.join(home_dir, '.credentials')
-    # if not os.path.exists(credential_dir):
-    #     os.makedirs(credential_dir)
-    # credential_path = os.path.join(credential_dir,
-    #                                'calendar-python-quickstart.json')
     cred_store_path = os.path.join(get_pj_root(), CRED_STORE_FILE)
     store = Storage(cred_store_path)
     credentials = store.get()
@@ -51,7 +45,7 @@ def authorize_http(credentials):
         return None, Exception("credential is none")
     return credentials.authorize(httplib2.Http()), None
 
-def create_event(auth_http, title, start_datetime, end_datetime, description='', location='', calendar_id='primary', time_zone='Asia/Tokyo'):
+def create_event(auth_http, title, start_datetime, end_datetime, description='', location='', calendar_id='primary', time_zone='UTC'):
     """
     create event in google calendar
     """

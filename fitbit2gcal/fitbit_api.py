@@ -11,12 +11,22 @@ def auth_fitbit(fitbit_cred, unit=fitbit.Fitbit.METRIC):
     Get authed client from fitbit using credentials.
     """
     try:
-        authd_client = fitbit.Fitbit(
-            fitbit_cred.client_id,
-            fitbit_cred.client_secret,
-            system=unit,
-            access_token=fitbit_cred.access_token,
-            refresh_token=fitbit_cred.refresh_token)
+        if fitbit_cred.access_token != None:
+            authd_client = fitbit.Fitbit(
+                fitbit_cred.client_id,
+                fitbit_cred.client_secret,
+                access_token=fitbit_cred.access_token,
+                refresh_token=fitbit_cred.refresh_token,
+                expires_at=fitbit_cred.expires_at,
+                refresh_cb=refresh_env_var,
+                system=unit)
+        elif fitbit_cred.client_id != None:
+            authd_client = fitbit.Fitbit(
+                fitbit_cred.client_id,
+                fitbit_cred.client_secret,
+                system=unit)
+        else:
+            return None, Exception("No authorize info for fitbit")
         # for testing whether client is authorized
         devs = authd_client.get_devices()
         print('Authorize Success! You are using {0}'.format(devs))
@@ -24,10 +34,14 @@ def auth_fitbit(fitbit_cred, unit=fitbit.Fitbit.METRIC):
     except Exception as err:
         return None, err
 
-def refresh_fitbit_token(authd_client):
-    token = authd_client.refresh_token()
-    print(vars(token))
-    return token
+def refresh_env_var(token):
+    """
+    Refresh callback for refresh_token method in python-fitbit
+    """
+    os.environ["FITBIT2CAL_FB_ACCESS_TOKEN"] = token["access_token"]
+    os.environ["FITBIT2CAL_FB_REFRESH_TOKEN"] = token["refresh_token"]
+    # cannot add float to env var...
+    os.environ["FITBIT2CAL_FB_EXPIRES_AT"] = str(token["expires_at"])
 
 def get_sleeps(authd_client, datetime):
     sleepData = authd_client.get_sleep(datetime)

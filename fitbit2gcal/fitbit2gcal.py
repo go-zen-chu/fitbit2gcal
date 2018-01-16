@@ -6,7 +6,7 @@ import gcal
 import fitbit_api
 from cal_event import CalendarEvent
 
-def send_fb_events2gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id, data_day = datetime.today(), time_zone="Asia/Tokyo"):
+def send_fb_events2gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id, data_day = datetime.today(), time_zone="UTC"):
     # MVP
     # 1. get auth of fitbit api
     authd_client, err = fitbit_api.auth_fitbit(fitbit_cred)
@@ -37,12 +37,15 @@ def send_fb_events2gcal(fitbit_cred, gcal_sleep_cal_id, gcal_activity_cal_id, da
 
     # 3. send fitbit data to google calendar
     gcal_cred = gcal.get_credentials()
-    err = send_events2gcal(sleep_events, activity_events)
+    err = send_events2gcal(gcal_cred,
+        sleep_events, gcal_sleep_cal_id,
+        activity_events, gcal_activity_cal_id,
+        time_zone=time_zone)
     if err != None:
         return Exception("Error while send data to google calendar : {}".format(err))
     return None
 
-def send_events2gcal(gcal_cred, sleep_events, activity_events):
+def send_events2gcal(gcal_cred, sleep_events, gcal_sleep_cal_id, activity_events, gcal_activity_cal_id, time_zone="UTC"):
     auth_http, err = gcal.authorize_http(gcal_cred)
     if err != None:
         return Exception("authorization for google cal is failed: {}".format(err))
